@@ -31,9 +31,9 @@ class users(db.Model): # inherit from here
 def home(): # new page needs a function
     return render_template("index.html")
 
-# @app.route("/view")
-# def view():
-#     return render_template
+@app.route("/view")
+def view():
+     return render_template("view.html", values=users.query.all())
 
 @app.route("/login", methods=["POST", "GET"]) # GET - receiving/sending information to a client/website, POST - secure method of GET where info not stored on webserver
 def login():
@@ -42,7 +42,9 @@ def login():
         user = request.form["nm"] # user is the input by the user on the site
         session["user"] = user # session stores the user input data, closing the browser will delete session data
 
-        found_user = users.query.filter_by(name=user).first() # find the users in the table that have a name from the first entry
+        found_user = users.query.filter_by(name=user).delete()# find the users in the table that have a name from the first entry
+        for user in found_user:
+            user.delete() # delete objects
         if found_user:
             session["email"] = found_user.email # grab user email and store in the session
         else:
